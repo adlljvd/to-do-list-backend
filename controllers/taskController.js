@@ -1,10 +1,27 @@
-const { Task } = require("../models/index");
+const { User, Task } = require("../models/index");
 
 class TaskController {
   static async createTask(req, res, next) {
     try {
       const { title, description, dueDate, time, status, priority, category } =
         req.body;
+
+      // Check and create category if not exists
+      if (category) {
+        const user = await User.findById(req.loginInfo.userId);
+        const categoryExists = user.categories.some(
+          (cat) => cat.name === category
+        );
+
+        if (!categoryExists) {
+          user.categories.push({
+            name: category,
+            color: "#" + Math.floor(Math.random() * 16777215).toString(16),
+            isDefault: false,
+          });
+          await user.save();
+        }
+      }
 
       const task = await Task.create({
         title,
@@ -27,10 +44,11 @@ class TaskController {
           date: task.formattedDate,
           status: task.status,
           priority: task.priority,
-          category: await task.categoryInfo,
+          category: task.categoryInfo,
         },
       });
     } catch (error) {
+      console.log(error);
       next(error);
     }
   }
@@ -48,7 +66,7 @@ class TaskController {
           date: task.formattedDate,
           status: task.status,
           priority: task.priority,
-          category: await task.categoryInfo,
+          category: task.categoryInfo,
         }))
       );
 
@@ -82,7 +100,7 @@ class TaskController {
           date: task.formattedDate,
           status: task.status,
           priority: task.priority,
-          category: await task.categoryInfo,
+          category: task.categoryInfo,
         },
       });
     } catch (error) {
@@ -102,6 +120,26 @@ class TaskController {
 
       if (!task) {
         throw { name: "NotFound" };
+      }
+
+      // Jika ada perubahan category
+      if (category && category !== task.category) {
+        const user = await User.findById(req.loginInfo.userId);
+
+        // Check if category exists
+        const categoryExists = user.categories.some(
+          (cat) => cat.name === category
+        );
+
+        // Jika category belum ada, create new
+        if (!categoryExists) {
+          user.categories.push({
+            name: category,
+            color: "#" + Math.floor(Math.random() * 16777215).toString(16),
+            isDefault: false,
+          });
+          await user.save();
+        }
       }
 
       task.title = title || task.title;
@@ -124,7 +162,7 @@ class TaskController {
           date: task.formattedDate,
           status: task.status,
           priority: task.priority,
-          category: await task.categoryInfo,
+          category: task.categoryInfo,
         },
       });
     } catch (error) {
@@ -167,7 +205,7 @@ class TaskController {
           date: task.formattedDate,
           status: task.status,
           priority: task.priority,
-          category: await task.categoryInfo,
+          category: task.categoryInfo,
         }))
       );
 
@@ -185,6 +223,35 @@ class TaskController {
       const tasks = await Task.find({
         userId: req.loginInfo.userId,
         status: req.params.status,
+      });
+
+      const formattedTasks = await Promise.all(
+        tasks.map(async (task) => ({
+          id: task._id,
+          title: task.title,
+          description: task.description,
+          time: task.time,
+          date: task.formattedDate,
+          status: task.status,
+          priority: task.priority,
+          category: task.categoryInfo,
+        }))
+      );
+
+      res.json({
+        message: "Tasks retrieved successfully",
+        data: formattedTasks,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getTasksByPriority(req, res, next) {
+    try {
+      const tasks = await Task.find({
+        userId: req.loginInfo.userId,
+        priority: req.params.priority,
       });
 
       const formattedTasks = await Promise.all(
