@@ -313,14 +313,14 @@ DELETE /categories/:name
 
 ### Seller Role
 
-Listing
-Bidding
-Winner
-Delivery
+- Listing
+- Bidding
+- Winner
+- Delivery
 
 ### Buyer Role
 
-Wishlist
-Bidding
-Payment
-Review
+- Wishlist
+- Bidding
+- Payment
+- Review
