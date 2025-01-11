@@ -22,6 +22,12 @@ const errorHandler = (error, req, res, next) => {
     message = "Please input email and password";
   }
 
+  // Cast Error (Invalid ObjectId)
+  if (error.name === "CastError") {
+    status = 400;
+    message = "Invalid ID format";
+  }
+
   // Login Error
   if (error.name === "LoginError") {
     status = 401;
@@ -32,12 +38,6 @@ const errorHandler = (error, req, res, next) => {
   if (error.name === "JsonWebTokenError") {
     status = 401;
     message = "Please login first!";
-  }
-
-  // Token Expired Error
-  if (error.name === "TokenExpiredError") {
-    status = 401;
-    message = "Session expired, please login again";
   }
 
   // Unauthorized Error
@@ -56,12 +56,6 @@ const errorHandler = (error, req, res, next) => {
   if (error.name === "NotFound") {
     status = 404;
     message = "Data not found";
-  }
-
-  // Cast Error (Invalid ObjectId)
-  if (error.name === "CastError") {
-    status = 400;
-    message = "Invalid ID format";
   }
 
   console.log(error); // For debugging
