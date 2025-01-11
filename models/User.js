@@ -38,10 +38,6 @@ const userSchema = new mongoose.Schema(
       type: [
         {
           name: String,
-          isDefault: {
-            type: Boolean,
-            default: false,
-          },
           color: {
             type: String,
             default: "#000000",
@@ -53,7 +49,6 @@ const userSchema = new mongoose.Schema(
           this.role === "seller" ? SELLER_CATEGORIES : BUYER_CATEGORIES;
         return defaultCategories.map((name) => ({
           name,
-          isDefault: false,
           color: "#" + Math.floor(Math.random() * 16777215).toString(16),
         }));
       },
