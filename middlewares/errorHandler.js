@@ -24,6 +24,11 @@ const errorHandler = (error, req, res, next) => {
     message = "Please input email and password";
   }
 
+  if (error.name === "Conflict") {
+    status = 400;
+    message = "Email already exists";
+  }
+
   // Login Error
   if (error.name === "LoginError") {
     status = 401;

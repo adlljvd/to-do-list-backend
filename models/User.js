@@ -9,13 +9,7 @@ const SELLER_CATEGORIES = [
   "Delivery",
   "Income",
 ];
-const BUYER_CATEGORIES = [
-  "Wishlist",
-  "Bidding",
-  "Payment",
-  "Review",
-  "History",
-];
+const BUYER_CATEGORIES = ["Wishlist", "Bidding", "Payment", "Review"];
 
 const userSchema = new mongoose.Schema(
   {
