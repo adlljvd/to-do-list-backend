@@ -29,16 +29,19 @@ A server-side application for a to-do list app built with Express.js and Mongoos
 ### Installation
 
 1. Clone the repository
+
    ```bash
    git clone <repository-url>
    ```
 
 2. Install dependencies
+
    ```bash
    npm install
    ```
 
 3. Set up environment variables in `.env`
+
    ```env
    PORT=3000
    MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>/todo-list-app
@@ -310,14 +313,14 @@ DELETE /categories/:name
 
 ### Seller Role
 
-#### Listing
-#### Bidding
-#### Winner
-#### Delivery
+Listing
+Bidding
+Winner
+Delivery
 
 ### Buyer Role
 
-#### Wishlist
-#### Bidding
-#### Payment
-#### Review
+Wishlist
+Bidding
+Payment
+Review
