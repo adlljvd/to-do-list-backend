@@ -13,20 +13,13 @@ const errorHandler = (error, req, res, next) => {
   // Mongoose Duplicate Key Error
   if (error.code === 11000) {
     status = 400;
-    message = `Duplicate value entered for ${
-      Object.keys(error.keyValue)[0]
-    } field`;
+    message = `${Object.keys(error.keyValue)[0]} already exists`;
   }
 
   // Bad Request Error
   if (error.name === "BadRequest") {
     status = 400;
     message = "Please input email and password";
-  }
-
-  if (error.name === "Conflict") {
-    status = 400;
-    message = "Email already exists";
   }
 
   // Login Error

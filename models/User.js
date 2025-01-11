@@ -2,13 +2,7 @@ const mongoose = require("mongoose");
 const { hash } = require("../helpers/bcrypt");
 
 // Definisi kategori default berdasarkan role
-const SELLER_CATEGORIES = [
-  "Listing",
-  "Bidding",
-  "Winner",
-  "Delivery",
-  "Income",
-];
+const SELLER_CATEGORIES = ["Listing", "Bidding", "Winner", "Delivery"];
 const BUYER_CATEGORIES = ["Wishlist", "Bidding", "Payment", "Review"];
 
 const userSchema = new mongoose.Schema(
@@ -60,7 +54,7 @@ const userSchema = new mongoose.Schema(
         return defaultCategories.map((name) => ({
           name,
           isDefault: true,
-          color: "#000000",
+          color: "#" + Math.floor(Math.random() * 16777215).toString(16),
         }));
       },
     },
