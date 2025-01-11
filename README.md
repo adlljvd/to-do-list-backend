@@ -1,8 +1,8 @@
-`# To-Do List Backend
+# To-Do List Backend
 
-This is a server-side for to do list app using Express.js and Mongoose
+A server-side application for a to-do list app built with Express.js and Mongoose.
 
-## Features
+## 🚀 Features
 
 - User authentication (register, login)
 - Task management (CRUD operations)
@@ -11,7 +11,7 @@ This is a server-side for to do list app using Express.js and Mongoose
 - Role-based default categories
 - Custom category colors
 
-## Tech Stack
+## 💻 Tech Stack
 
 - Node.js
 - Express.js
@@ -19,7 +19,7 @@ This is a server-side for to do list app using Express.js and Mongoose
 - JSON Web Token (JWT)
 - Bcrypt
 
-## Getting Started
+## 🛠️ Getting Started
 
 ### Prerequisites
 
@@ -29,295 +29,295 @@ This is a server-side for to do list app using Express.js and Mongoose
 ### Installation
 
 1. Clone the repository
-   \`\`\`bash
+   ```bash
    git clone <repository-url>
-   \`\`\`
+   ```
 
 2. Install dependencies
-   \`\`\`bash
+   ```bash
    npm install
-   \`\`\`
+   ```
 
-3. Set up environment variables in \`.env\`
-   \`\`\`
+3. Set up environment variables in `.env`
+   ```env
    PORT=3000
    MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>/todo-list-app
    SECRET_KEY=<your-secret-key>
-   \`\`\`
+   ```
 
 4. Run the server
-   \`\`\`bash
+   ```bash
    npm start
-   \`\`\`
+   ```
 
-## API Documentation
+## 📚 API Documentation
 
 ### Base URL
 
-\`\`\`
+```
 http://localhost:3000
-\`\`\`
+```
 
 ### Authentication Routes
 
 #### Register
 
-\`\`\`http
+```http
 POST /register
 
-Request Body:
+# Request Body
 {
-"email": "user@mail.com",
-"password": "password123",
-"role": "seller" // or "buyer"
+    "email": "user@mail.com",
+    "password": "password123",
+    "role": "seller"  // or "buyer"
 }
 
-Response (201):
+# Response (201)
 {
-"message": "User registered successfully",
-"data": {
-"id": "user_id",
-"email": "user@mail.com",
-"role": "seller"
+    "message": "User registered successfully",
+    "data": {
+        "id": "user_id",
+        "email": "user@mail.com",
+        "role": "seller"
+    }
 }
-}
-\`\`\`
+```
 
 #### Login
 
-\`\`\`http
+```http
 POST /login
 
-Request Body:
+# Request Body
 {
-"email": "user@mail.com",
-"password": "password123"
+    "email": "user@mail.com",
+    "password": "password123"
 }
 
-Response (200):
+# Response (200)
 {
-"message": "Login successful",
-"data": {
-"access_token": "jwt_token"
+    "message": "Login successful",
+    "data": {
+        "access_token": "jwt_token"
+    }
 }
-}
-\`\`\`
+```
 
 ### Task Routes
 
-All routes require Authorization header: \`Bearer <token>\`
+> All routes require Authorization header: `Bearer <token>`
 
 #### Get All Tasks
 
-\`\`\`http
+```http
 GET /tasks
 
-Response (200):
+# Response (200)
 {
-"message": "Tasks retrieved successfully",
-"data": [
-{
-"id": "task_id",
-"title": "Task 1",
-"description": "Description",
-"time": "10:00",
-"date": "2025-01-12",
-"status": "pending",
-"priority": "high",
-"category": {
-"name": "Work",
-"color": "#FF5733"
+    "message": "Tasks retrieved successfully",
+    "data": [
+        {
+            "id": "task_id",
+            "title": "Task 1",
+            "description": "Description",
+            "time": "10:00",
+            "date": "2025-01-12",
+            "status": "pending",
+            "priority": "high",
+            "category": {
+                "name": "Work",
+                "color": "#FF5733"
+            }
+        }
+    ]
 }
-}
-]
-}
-\`\`\`
+```
 
 #### Create Task
 
-\`\`\`http
+```http
 POST /tasks
 
-Request Body:
+# Request Body
 {
-"title": "Task 1",
-"description": "Description",
-"dueDate": "2025-01-12",
-"time": "10:00",
-"status": "pending",
-"priority": "high",
-"category": "Work"
+    "title": "Task 1",
+    "description": "Description",
+    "dueDate": "2025-01-12",
+    "time": "10:00",
+    "status": "pending",
+    "priority": "high",
+    "category": "Work"
 }
 
-Response (201):
+# Response (201)
 {
-"message": "Task created successfully",
-"data": {
-"id": "task_id",
-"title": "Task 1",
-...
+    "message": "Task created successfully",
+    "data": {
+        "id": "task_id",
+        "title": "Task 1",
+        ...
+    }
 }
-}
-\`\`\`
+```
 
 #### Update Task
 
-\`\`\`http
+```http
 PUT /tasks/:id
 
-Request Body: (all fields optional)
+# Request Body (all fields optional)
 {
-"title": "Updated Task",
-"description": "Updated Description",
-"dueDate": "2025-01-13",
-"time": "11:00",
-"status": "completed",
-"priority": "medium",
-"category": "Personal"
+    "title": "Updated Task",
+    "description": "Updated Description",
+    "dueDate": "2025-01-13",
+    "time": "11:00",
+    "status": "completed",
+    "priority": "medium",
+    "category": "Personal"
 }
 
-Response (200):
+# Response (200)
 {
-"message": "Task updated successfully",
-"data": {
-"id": "task_id",
-"title": "Updated Task",
-...
+    "message": "Task updated successfully",
+    "data": {
+        "id": "task_id",
+        "title": "Updated Task",
+        ...
+    }
 }
-}
-\`\`\`
+```
 
 #### Delete Task
 
-\`\`\`http
+```http
 DELETE /tasks/:id
 
-Response (200):
+# Response (200)
 {
-"message": "Task deleted successfully"
+    "message": "Task deleted successfully"
 }
-\`\`\`
+```
 
 #### Filter Tasks
 
-\`\`\`http
+```http
 GET /tasks/category/:category
 GET /tasks/status/:status
 GET /tasks/priority/:priority
 
-Response (200):
+# Response (200)
 {
-"message": "Tasks retrieved successfully",
-"data": [...]
+    "message": "Tasks retrieved successfully",
+    "data": [...]
 }
-\`\`\`
+```
 
 ### Category Routes
 
-All routes require Authorization header: \`Bearer <token>\`
+> All routes require Authorization header: `Bearer <token>`
 
 #### Get All Categories
 
-\`\`\`http
+```http
 GET /categories
 
-Response (200):
+# Response (200)
 {
-"message": "Categories retrieved successfully",
-"data": [
-{
-"name": "Work",
-"color": "#FF5733",
-"isDefault": true
+    "message": "Categories retrieved successfully",
+    "data": [
+        {
+            "name": "Work",
+            "color": "#FF5733",
+            "isDefault": true
+        }
+    ]
 }
-]
-}
-\`\`\`
+```
 
 #### Add Category
 
-\`\`\`http
+```http
 POST /categories
 
-Request Body:
+# Request Body
 {
-"name": "Shopping",
-"color": "#33FF57" // optional
+    "name": "Shopping",
+    "color": "#33FF57"  // optional
 }
 
-Response (201):
+# Response (201)
 {
-"message": "Category added successfully",
-"data": [...]
+    "message": "Category added successfully",
+    "data": [...]
 }
-\`\`\`
+```
 
 #### Update Category
 
-\`\`\`http
+```http
 PUT /categories/:name
 
-Request Body: (all fields optional)
+# Request Body (all fields optional)
 {
-"name": "New Name",
-"color": "#5733FF"
+    "name": "New Name",
+    "color": "#5733FF"
 }
 
-Response (200):
+# Response (200)
 {
-"message": "Category updated successfully",
-"data": [...]
+    "message": "Category updated successfully",
+    "data": [...]
 }
-\`\`\`
+```
 
 #### Delete Category
 
-\`\`\`http
+```http
 DELETE /categories/:name
 
-Response (200):
+# Response (200)
 {
-"message": "Category deleted successfully",
-"data": [...]
+    "message": "Category deleted successfully",
+    "data": [...]
 }
-\`\`\`
+```
 
 ### Error Responses
 
-\`\`\`http
-400 Bad Request:
+```http
+# 400 Bad Request
 {
-"message": "Invalid input data"
+    "message": "Invalid input data"
 }
 
-401 Unauthorized:
+# 401 Unauthorized
 {
-"message": "Please login first!"
+    "message": "Please login first!"
 }
 
-404 Not Found:
+# 404 Not Found
 {
-"message": "Data not found"
+    "message": "Data not found"
 }
 
-500 Internal Server Error:
+# 500 Internal Server Error
 {
-"message": "Internal server error"
+    "message": "Internal server error"
 }
-\`\`\`
+```
 
-## Default Categories
+## 📋 Default Categories
 
 ### Seller Role
 
-- Listing
-- Bidding
-- Winner
-- Delivery
+#### Listing
+#### Bidding
+#### Winner
+#### Delivery
 
 ### Buyer Role
 
-- Wishlist
-- Bidding
-- Payment
-- Review
+#### Wishlist
+#### Bidding
+#### Payment
+#### Review
