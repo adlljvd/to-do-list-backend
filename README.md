@@ -65,7 +65,7 @@ http://localhost:3000
 
 #### Register
 
-```http
+```json
 POST /register
 
 # Request Body
@@ -88,7 +88,7 @@ POST /register
 
 #### Login
 
-```http
+```json
 POST /login
 
 # Request Body
@@ -112,7 +112,7 @@ POST /login
 
 #### Get All Tasks
 
-```http
+```json
 GET /tasks
 
 # Response (200)
@@ -138,7 +138,7 @@ GET /tasks
 
 #### Create Task
 
-```http
+```json
 POST /tasks
 
 # Request Body
@@ -165,7 +165,7 @@ POST /tasks
 
 #### Update Task
 
-```http
+```json
 PUT /tasks/:id
 
 # Request Body (all fields optional)
@@ -192,7 +192,7 @@ PUT /tasks/:id
 
 #### Delete Task
 
-```http
+```json
 DELETE /tasks/:id
 
 # Response (200)
@@ -203,7 +203,7 @@ DELETE /tasks/:id
 
 #### Filter Tasks
 
-```http
+```json
 GET /tasks/category/:category
 GET /tasks/status/:status
 GET /tasks/priority/:priority
@@ -221,7 +221,7 @@ GET /tasks/priority/:priority
 
 #### Get All Categories
 
-```http
+```json
 GET /categories
 
 # Response (200)
@@ -239,7 +239,7 @@ GET /categories
 
 #### Add Category
 
-```http
+```json
 POST /categories
 
 # Request Body
@@ -257,7 +257,7 @@ POST /categories
 
 #### Update Category
 
-```http
+```json
 PUT /categories/:name
 
 # Request Body (all fields optional)
@@ -275,7 +275,7 @@ PUT /categories/:name
 
 #### Delete Category
 
-```http
+```json
 DELETE /categories/:name
 
 # Response (200)
@@ -287,7 +287,7 @@ DELETE /categories/:name
 
 ### Error Responses
 
-```http
+```json
 # 400 Bad Request
 {
     "message": "Invalid input data"
