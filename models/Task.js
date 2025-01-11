@@ -78,7 +78,9 @@ taskSchema.virtual("categoryInfo").get(async function () {
   const category = user.categories.find((cat) => cat.name === this.category);
   return {
     name: this.category,
-    color: category ? category.color : "#000000",
+    color: category
+      ? category.color
+      : "#" + Math.floor(Math.random() * 16777215).toString(16),
   };
 });
 
