@@ -75,30 +75,15 @@ taskSchema.virtual("formattedDate").get(function () {
 
 taskSchema.virtual("categoryInfo").get(async function () {
   const user = await mongoose.model("User").findById(this.userId);
-  const category = user.categories.find((cat) => cat.name === this.category);
+  const category = user.categories.find(
+    (cat) => cat.name.toLowerCase() === this.category.toLowerCase()
+  );
   return {
-    name: this.category,
+    name: category ? category.name : this.category,
     color: category
       ? category.color
       : "#" + Math.floor(Math.random() * 16777215).toString(16),
   };
-});
-
-taskSchema.pre("save", async function (next) {
-  const user = await mongoose.model("User").findById(this.userId);
-  const categoryExists = user.categories.some(
-    (cat) => cat.name === this.category
-  );
-
-  if (!categoryExists) {
-    user.categories.push({
-      name: this.category,
-      isDefault: false,
-      color: "#" + Math.floor(Math.random() * 16777215).toString(16),
-    });
-    await user.save();
-  }
-  next();
 });
 
 // Indexes

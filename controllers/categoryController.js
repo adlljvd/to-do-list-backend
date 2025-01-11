@@ -4,18 +4,24 @@ class CategoryController {
   static async addCategory(req, res, next) {
     try {
       const { name, color } = req.body;
-      const user = await User.findById(req.loginInfo.userId);
+      const { userId } = req.loginInfo;
 
-      // Check if category already exists
-      const categoryExists = user.categories.some((cat) => cat.name === name);
+      const user = await User.findById(userId);
+
+      const formattedName =
+        name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+
+      // Check if category already exists (case insensitive)
+      const categoryExists = user.categories.some(
+        (cat) => cat.name.toLowerCase() === name.toLowerCase()
+      );
       if (categoryExists) {
         throw { name: "BadRequest", message: "Category already exists" };
       }
 
       user.categories.push({
-        name,
+        name: formattedName,
         color: color || "#" + Math.floor(Math.random() * 16777215).toString(16),
-        isDefault: false,
       });
 
       await user.save();
@@ -32,10 +38,13 @@ class CategoryController {
   static async updateCategory(req, res, next) {
     try {
       const { name, color } = req.body;
-      const user = await User.findById(req.loginInfo.userId);
+      const { userId } = req.loginInfo;
+      const { name: paramName } = req.params;
+
+      const user = await User.findById(userId);
 
       const category = user.categories.find(
-        (cat) => cat.name === req.params.name
+        (cat) => cat.name.toLowerCase() === paramName.toLowerCase()
       );
       if (!category) {
         throw { name: "NotFound" };
@@ -43,19 +52,28 @@ class CategoryController {
 
       // Check if category is being used
       const taskUsingCategory = await Task.findOne({
-        userId: req.loginInfo.userId,
-        category: req.params.name,
+        userId,
+        category: category.name,
       });
 
-      if (taskUsingCategory && name && name !== req.params.name) {
+      if (
+        taskUsingCategory &&
+        name &&
+        name.toLowerCase() !== category.name.toLowerCase()
+      ) {
         throw {
           name: "BadRequest",
           message: "Cannot change name of category that is being used by tasks",
         };
       }
 
-      category.name = name || category.name;
-      category.color = color || category.color;
+      if (name) {
+        category.name =
+          name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+      }
+      if (color) {
+        category.color = color;
+      }
 
       await user.save();
 
@@ -70,18 +88,22 @@ class CategoryController {
 
   static async deleteCategory(req, res, next) {
     try {
-      const user = await User.findById(req.loginInfo.userId);
-      const categoryName = req.params.name;
+      const { userId } = req.loginInfo;
+      const { name } = req.params;
 
-      const category = user.categories.find((cat) => cat.name === categoryName);
+      const user = await User.findById(userId);
+
+      const category = user.categories.find(
+        (cat) => cat.name.toLowerCase() === name.toLowerCase()
+      );
       if (!category) {
         throw { name: "NotFound" };
       }
 
       // Check if category is being used by any active task (not completed)
       const activeTaskUsingCategory = await Task.findOne({
-        userId: req.loginInfo.userId,
-        category: categoryName,
+        userId,
+        category: category.name,
         status: { $ne: "completed" },
       });
 
@@ -94,7 +116,7 @@ class CategoryController {
 
       // Remove category
       user.categories = user.categories.filter(
-        (cat) => cat.name !== categoryName
+        (cat) => cat.name.toLowerCase() !== name.toLowerCase()
       );
       await user.save();
 
@@ -109,7 +131,8 @@ class CategoryController {
 
   static async getCategories(req, res, next) {
     try {
-      const user = await User.findById(req.loginInfo.userId);
+      const { userId } = req.loginInfo;
+      const user = await User.findById(userId);
 
       res.json({
         message: "Categories retrieved successfully",

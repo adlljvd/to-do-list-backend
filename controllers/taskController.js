@@ -5,21 +5,28 @@ class TaskController {
     try {
       const { title, description, dueDate, time, status, priority, category } =
         req.body;
+      const { userId } = req.loginInfo;
 
-      // Check and create category if not exists
+      let categoryName = category;
+
       if (category) {
-        const user = await User.findById(req.loginInfo.userId);
-        const categoryExists = user.categories.some(
-          (cat) => cat.name === category
+        const user = await User.findById(userId);
+        const existingCategory = user.categories.find(
+          (cat) => cat.name.toLowerCase() === category.toLowerCase()
         );
 
-        if (!categoryExists) {
+        if (existingCategory) {
+          categoryName = existingCategory.name;
+        } else {
+          const formattedCategoryName =
+            category.charAt(0).toUpperCase() + category.slice(1).toLowerCase();
+
           user.categories.push({
-            name: category,
+            name: formattedCategoryName,
             color: "#" + Math.floor(Math.random() * 16777215).toString(16),
-            isDefault: false,
           });
           await user.save();
+          categoryName = formattedCategoryName;
         }
       }
 
@@ -30,9 +37,11 @@ class TaskController {
         time,
         status,
         priority,
-        category,
+        category: categoryName,
         userId: req.loginInfo.userId,
       });
+
+      const categoryInfo = await task.categoryInfo;
 
       res.status(201).json({
         message: "Task created successfully",
@@ -44,7 +53,7 @@ class TaskController {
           date: task.formattedDate,
           status: task.status,
           priority: task.priority,
-          category: task.categoryInfo,
+          category: categoryInfo,
         },
       });
     } catch (error) {
@@ -55,16 +64,22 @@ class TaskController {
 
   static async getTasks(req, res, next) {
     try {
-      const { sort } = req.query;
-      let tasks;
+      const { sort, category, status, priority } = req.query;
+      const { userId } = req.loginInfo;
 
+      let query = { userId };
+      if (category) query.category = category;
+      if (status) query.status = status;
+      if (priority) query.priority = priority;
+
+      let tasks;
       if (sort === "dueDate") {
-        tasks = await Task.find({ userId: req.loginInfo.userId }).sort({
+        tasks = await Task.find(query).sort({
           dueDate: 1,
           time: 1,
-        }); //1 ascending
+        });
       } else {
-        tasks = await Task.find({ userId: req.loginInfo.userId });
+        tasks = await Task.find(query);
       }
 
       const formattedTasks = await Promise.all(
@@ -76,7 +91,7 @@ class TaskController {
           date: task.formattedDate,
           status: task.status,
           priority: task.priority,
-          category: task.categoryInfo,
+          category: await task.categoryInfo,
         }))
       );
 
@@ -91,9 +106,12 @@ class TaskController {
 
   static async getTaskById(req, res, next) {
     try {
+      const { id } = req.params;
+      const { userId } = req.loginInfo;
+
       const task = await Task.findOne({
-        _id: req.params.id,
-        userId: req.loginInfo.userId,
+        _id: id,
+        userId,
       });
 
       if (!task) {
@@ -122,10 +140,12 @@ class TaskController {
     try {
       const { title, description, dueDate, time, status, priority, category } =
         req.body;
+      const { userId } = req.loginInfo;
+      const { id } = req.params;
 
       const task = await Task.findOne({
-        _id: req.params.id,
-        userId: req.loginInfo.userId,
+        _id: id,
+        userId,
       });
 
       if (!task) {
@@ -134,7 +154,7 @@ class TaskController {
 
       // Jika ada perubahan category
       if (category && category !== task.category) {
-        const user = await User.findById(req.loginInfo.userId);
+        const user = await User.findById(userId);
 
         // Check if category exists
         const categoryExists = user.categories.some(
@@ -182,9 +202,12 @@ class TaskController {
 
   static async deleteTask(req, res, next) {
     try {
+      const { userId } = req.loginInfo;
+      const { id } = req.params;
+
       const task = await Task.findOneAndDelete({
-        _id: req.params.id,
-        userId: req.loginInfo.userId,
+        _id: id,
+        userId,
       });
 
       if (!task) {
@@ -193,93 +216,6 @@ class TaskController {
 
       res.json({
         message: "Task deleted successfully",
-      });
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  static async getTasksByCategory(req, res, next) {
-    try {
-      const tasks = await Task.find({
-        userId: req.loginInfo.userId,
-        category: req.params.category,
-      });
-
-      const formattedTasks = await Promise.all(
-        tasks.map(async (task) => ({
-          id: task._id,
-          title: task.title,
-          description: task.description,
-          time: task.time,
-          date: task.formattedDate,
-          status: task.status,
-          priority: task.priority,
-          category: task.categoryInfo,
-        }))
-      );
-
-      res.json({
-        message: "Tasks retrieved successfully",
-        data: formattedTasks,
-      });
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  static async getTasksByStatus(req, res, next) {
-    try {
-      const tasks = await Task.find({
-        userId: req.loginInfo.userId,
-        status: req.params.status,
-      });
-
-      const formattedTasks = await Promise.all(
-        tasks.map(async (task) => ({
-          id: task._id,
-          title: task.title,
-          description: task.description,
-          time: task.time,
-          date: task.formattedDate,
-          status: task.status,
-          priority: task.priority,
-          category: task.categoryInfo,
-        }))
-      );
-
-      res.json({
-        message: "Tasks retrieved successfully",
-        data: formattedTasks,
-      });
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  static async getTasksByPriority(req, res, next) {
-    try {
-      const tasks = await Task.find({
-        userId: req.loginInfo.userId,
-        priority: req.params.priority,
-      });
-
-      const formattedTasks = await Promise.all(
-        tasks.map(async (task) => ({
-          id: task._id,
-          title: task.title,
-          description: task.description,
-          time: task.time,
-          date: task.formattedDate,
-          status: task.status,
-          priority: task.priority,
-          category: task.categoryInfo,
-        }))
-      );
-
-      res.json({
-        message: "Tasks retrieved successfully",
-        data: formattedTasks,
       });
     } catch (error) {
       next(error);
