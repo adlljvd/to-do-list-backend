@@ -55,7 +55,17 @@ class TaskController {
 
   static async getTasks(req, res, next) {
     try {
-      const tasks = await Task.find({ userId: req.loginInfo.userId });
+      const { sort } = req.query;
+      let tasks;
+
+      if (sort === "dueDate") {
+        tasks = await Task.find({ userId: req.loginInfo.userId }).sort({
+          dueDate: 1,
+          time: 1,
+        }); //1 ascending
+      } else {
+        tasks = await Task.find({ userId: req.loginInfo.userId });
+      }
 
       const formattedTasks = await Promise.all(
         tasks.map(async (task) => ({

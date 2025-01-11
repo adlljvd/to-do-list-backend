@@ -114,6 +114,7 @@ POST /login
 
 ```json
 GET /tasks
+GET /tasks?sort=dueDate  // Sort by due date (ascending)
 
 # Response (200)
 {
