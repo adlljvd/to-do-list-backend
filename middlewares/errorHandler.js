@@ -22,6 +22,12 @@ const errorHandler = (error, req, res, next) => {
     message = "Please input email and password";
   }
 
+  // Bad Request Error
+  if (error.name === "CategoryBadRequest") {
+    status = 400;
+    message = "Cannot delete category that is being used by active tasks";
+  }
+
   // Cast Error (Invalid ObjectId)
   if (error.name === "CastError") {
     status = 400;

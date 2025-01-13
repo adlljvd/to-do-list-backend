@@ -39,13 +39,14 @@ class CategoryController {
     try {
       const { name, color } = req.body;
       const { userId } = req.loginInfo;
-      const { name: paramName } = req.params;
+      const { categoryId } = req.params;
 
       const user = await User.findById(userId);
 
       const category = user.categories.find(
-        (cat) => cat.name.toLowerCase() === paramName.toLowerCase()
+        (cat) => cat._id.toString() === categoryId
       );
+
       if (!category) {
         throw { name: "NotFound" };
       }
@@ -62,8 +63,7 @@ class CategoryController {
         name.toLowerCase() !== category.name.toLowerCase()
       ) {
         throw {
-          name: "BadRequest",
-          message: "Cannot change name of category that is being used by tasks",
+          name: "CategoryBadRequest",
         };
       }
 
@@ -89,13 +89,14 @@ class CategoryController {
   static async deleteCategory(req, res, next) {
     try {
       const { userId } = req.loginInfo;
-      const { name } = req.params;
+      const { categoryId } = req.params;
 
       const user = await User.findById(userId);
 
       const category = user.categories.find(
-        (cat) => cat.name.toLowerCase() === name.toLowerCase()
+        (cat) => cat._id.toString() === categoryId
       );
+
       if (!category) {
         throw { name: "NotFound" };
       }
@@ -109,14 +110,13 @@ class CategoryController {
 
       if (activeTaskUsingCategory) {
         throw {
-          name: "BadRequest",
-          message: "Cannot delete category that is being used by active tasks",
+          name: "CategoryBadRequest",
         };
       }
 
       // Remove category
       user.categories = user.categories.filter(
-        (cat) => cat.name.toLowerCase() !== name.toLowerCase()
+        (cat) => cat._id.toString() !== categoryId
       );
       await user.save();
 

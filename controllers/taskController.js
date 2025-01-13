@@ -54,6 +54,8 @@ class TaskController {
           status: task.status,
           priority: task.priority,
           category: categoryInfo,
+          createdAt: task.createdAt,
+          updatedAt: task.updatedAt,
         },
       });
     } catch (error) {
@@ -92,6 +94,8 @@ class TaskController {
           status: task.status,
           priority: task.priority,
           category: await task.categoryInfo,
+          createdAt: task.createdAt,
+          updatedAt: task.updatedAt,
         }))
       );
 
@@ -118,6 +122,8 @@ class TaskController {
         throw { name: "NotFound" };
       }
 
+      const categoryInfo = await task.categoryInfo;
+
       res.json({
         message: "Task retrieved successfully",
         data: {
@@ -128,7 +134,9 @@ class TaskController {
           date: task.formattedDate,
           status: task.status,
           priority: task.priority,
-          category: task.categoryInfo,
+          category: categoryInfo,
+          createdAt: task.createdAt,
+          updatedAt: task.updatedAt,
         },
       });
     } catch (error) {
@@ -182,6 +190,8 @@ class TaskController {
 
       await task.save();
 
+      const categoryInfo = await task.categoryInfo;
+
       res.json({
         message: "Task updated successfully",
         data: {
@@ -192,7 +202,9 @@ class TaskController {
           date: task.formattedDate,
           status: task.status,
           priority: task.priority,
-          category: task.categoryInfo,
+          category: categoryInfo,
+          createdAt: task.createdAt,
+          updatedAt: task.updatedAt,
         },
       });
     } catch (error) {
